@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Check out the source repository
+                git url: 'https://github.com/Gayathri-Gogireddy/python.git', branch: 'main'
+            }
+        }
+
+        stage('Push to Target Repo') {
+            steps {
+                script {
+                    // Use the correct credentials ID
+                    withCredentials([usernamePassword(credentialsId: 'your-id', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+
+                        // Configure Git user
+                       // sh 'git config user.name "your-username"'
+                        //sh 'git config user.email "your-email@example.com"'
+
+                        // Remove the existing origin and add the target repository as the new origin
+                        sh 'git remote remove origin'
+                        sh 'git remote add origin https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Gayathri-Gogireddy/do.git'
+
+                        // Push the changes to the target repository
+                        sh 'git push -u origin main'
+                    }
+                }
+            }
+        }
+    }
+}
